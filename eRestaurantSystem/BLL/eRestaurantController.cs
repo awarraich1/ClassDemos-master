@@ -15,6 +15,7 @@ namespace eRestaurantSystem.BLL
     [DataObject]
     public class eRestaurantController
     {
+        #region SpecialEvents
         [DataObjectMethod(DataObjectMethodType.Select,false)]
         public List<SpecialEvent> SpecialEvent_List()
         {
@@ -24,7 +25,9 @@ namespace eRestaurantSystem.BLL
                 return context.SpecialEvents.ToList();
             }
         }
+        #endregion
 
+        #region Reservations
         [DataObjectMethod(DataObjectMethodType.Select, false)]
         public List<Reservation> Reservation_List()
         {
@@ -44,5 +47,58 @@ namespace eRestaurantSystem.BLL
             }
         }
 
+        [DataObjectMethod(DataObjectMethodType.Select, false)]
+        public SpecialEvent SpecialEventByEventCode(string eventcode)
+        {
+            using(eRestaurantContext context = new eRestaurantContext())
+            {
+                return context.SpecialEvents.Find(eventcode);
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Insert, false)]
+        public void SpecialEvents_Add(SpecialEvent item)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                SpecialEvent added = null;
+                added = context.SpecialEvents.Add(item);
+                //commits the add to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();   
+            }           
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Update, false)]
+        public void SpecialEvents_Update(SpecialEvent item)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                context.Entry<SpecialEvent>(context.SpecialEvents.Attach
+                    (item)).State = System.Data.Entity.EntityState.Modified;
+               
+                //commits the changes to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Delete, false)]
+        public void SpecialEvents_Delete(SpecialEvent item)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                SpecialEvent existing = context.SpecialEvents.Find(item.EventCode);
+                context.SpecialEvents.Remove(existing);
+
+                //commits the changes to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();
+            }
+        }
+        #endregion
     }
 }
