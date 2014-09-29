@@ -100,5 +100,79 @@ namespace eRestaurantSystem.BLL
             }
         }
         #endregion
+
+        #region Waiter
+        [DataObjectMethod(DataObjectMethodType.Select, false)]
+        public List<Waiter> Waiter_List()
+        {
+            //interfacing with our Context class
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                return context.Waiters.ToList();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Select, false)]
+        public List<Reservation> WaiterByWaiterID(int waiterid)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                return context.Waiters.Where(anInt => int.WaiterID == waiterid).ToList();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Select, false)]
+        public SpecialEvent WaiterByWaiterID(int waiterid)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                return context.SpecialEvents.Find(waiterid);
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Insert, false)]
+        public void Waiters_Add(Waiter item)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                Waiter added = null;
+                added = context.Waiters.Add(item);
+                //commits the add to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Update, false)]
+        public void Waiters_Update(Waiter item)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                context.Entry<Waiter>(context.Waiters.Attach
+                    (item)).State = System.Data.Entity.EntityState.Modified;
+
+                //commits the changes to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();
+            }
+        }
+
+        [DataObjectMethod(DataObjectMethodType.Delete, false)]
+        public void Waiters_Delete(Waiter waiterid)
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                Waiter existing = context.Waiters.Find(waiterid);
+                context.Waiters.Remove(existing);
+
+                //commits the changes to the database
+                //evaluates the annotations(validations) to your entity
+                //[Required],[StringLength], [Range],...
+                context.SaveChanges();
+            }
+        }
+        #endregion
     }
 }
