@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using eRestaurantSystem.Entities;
 using eRestaurantSystem.DAL;
 using System.ComponentModel;
+using eRestaurantSystem.POCO_s;
 #endregion
 
 namespace eRestaurantSystem.BLL
@@ -78,6 +79,7 @@ namespace eRestaurantSystem.BLL
             }
         }
         #endregion
+
         #region SpecialEvents
         [DataObjectMethod(DataObjectMethodType.Select, false)]
         public List<SpecialEvent> SpecialEvent_List()
@@ -136,6 +138,7 @@ namespace eRestaurantSystem.BLL
             }
         }
         #endregion
+
         #region Reservations
         [DataObjectMethod(DataObjectMethodType.Select, false)]
         public List<Reservation> Reservation_List()
@@ -205,6 +208,7 @@ namespace eRestaurantSystem.BLL
             }
         }
         #endregion
+
         #region Waiters
         [DataObjectMethod(DataObjectMethodType.Select, false)]
         public List<Waiter> Waiter_List()
@@ -259,6 +263,32 @@ namespace eRestaurantSystem.BLL
                 Waiter existing = context.Waiters.Find(item.WaiterID);
                 context.Waiters.Remove(existing);
                 context.SaveChanges();
+            }
+        }
+        #endregion
+
+        #region LinqQueries
+        [DataObjectMethod(DataObjectMethodType.Select,false)]
+        public List<CategoryMenuItems> GetCategoryMenuItems()
+        {
+            using (eRestaurantContext context = new eRestaurantContext())
+            {
+                var results = from cat in context.MenuCategories
+                              orderby cat.Description
+                              select new CategoryMenuItems()
+                              {
+                                  Description = cat.Description,
+                                  MenuItems = from item in cat.Items
+                                              where item.Active
+                                              select new MenuItem()
+                                              {
+                                                  Description = item.Description,
+                                                  Price = item.CurrentPrice,
+                                                  Calories = item.Calories,
+                                                  Comment = item.Comment
+                                              }
+                              };
+                results.Dump();
             }
         }
         #endregion
